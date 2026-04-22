@@ -1,0 +1,18 @@
+# Core
+flask==3.0.3
+flask-cors==4.0.1
+
+# PDF Processing
+pdfplumber==0.11.0
+
+# Embeddings & Vector Store
+faiss-cpu==1.8.0
+sentence-transformers==3.0.1
+
+# LLM via Ollama
+ollama==0.2.1
+
+# Utilities
+python-dotenv==1.0.1
+numpy==1.26.4
+werkzeug==3.0.3

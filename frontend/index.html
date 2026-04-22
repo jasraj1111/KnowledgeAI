@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Knowledge Assistant</title>
+  <meta name="description" content="Personal AI Knowledge Assistant – Chat with your PDFs, emails and Notion pages powered by local LLM." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════ SIDEBAR ═══════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-header">
+    <div class="logo">
+      <span class="logo-icon">⟁</span>
+      <span class="logo-text">KnowledgeAI</span>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+  </div>
+
+  <!-- Knowledge Base Stats -->
+  <section class="sidebar-section">
+    <h3 class="section-label">Knowledge Base</h3>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <span class="stat-number" id="statTotal">–</span>
+        <span class="stat-label">Total Chunks</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="statPdf">–</span>
+        <span class="stat-label">PDF</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="statGmail">–</span>
+        <span class="stat-label">Gmail</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="statNotion">–</span>
+        <span class="stat-label">Notion</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PDF Upload -->
+  <section class="sidebar-section">
+    <h3 class="section-label">Upload PDF</h3>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" accept=".pdf" hidden />
+      <div class="upload-icon">📄</div>
+      <p class="upload-hint">Drop a PDF here or <span class="upload-link" id="uploadBrowse">browse</span></p>
+    </div>
+    <div class="upload-progress hidden" id="uploadProgress">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-label" id="progressLabel">Uploading…</span>
+    </div>
+    <div class="uploaded-files" id="uploadedFiles"></div>
+  </section>
+
+  <!-- Source Filter -->
+  <section class="sidebar-section">
+    <h3 class="section-label">Filter Sources</h3>
+    <div class="filter-pills" id="filterPills">
+      <button class="pill active" data-source="">All</button>
+      <button class="pill" data-source="pdf">PDF</button>
+      <button class="pill" data-source="gmail">Gmail</button>
+      <button class="pill" data-source="notion">Notion</button>
+    </div>
+  </section>
+
+  <!-- Coming Soon -->
+  <section class="sidebar-section">
+    <h3 class="section-label">Coming Soon</h3>
+    <div class="coming-soon-list">
+      <div class="coming-soon-item">
+        <span class="cs-icon">📧</span>
+        <span>Gmail Integration</span>
+        <span class="badge">Phase 2</span>
+      </div>
+      <div class="coming-soon-item">
+        <span class="cs-icon">📝</span>
+        <span>Notion Sync</span>
+        <span class="badge">Phase 3</span>
+      </div>
+    </div>
+  </section>
+
+</aside>
+
+<!-- ═══════════════════════════ MAIN ═══════════════════════════════ -->
+<main class="main" id="main">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1 class="page-title">AI Knowledge Assistant</h1>
+      <div class="status-dot" id="statusDot" title="Checking server…"></div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost" id="clearChatBtn">Clear chat</button>
+      <button class="btn btn-ghost" id="refreshStatsBtn">↻ Refresh</button>
+    </div>
+  </header>
+
+  <!-- Chat window -->
+  <div class="chat-window" id="chatWindow">
+
+    <!-- Welcome message -->
+    <div class="welcome-screen" id="welcomeScreen">
+      <div class="welcome-glow"></div>
+      <div class="welcome-icon">⟁</div>
+      <h2>Ask me anything</h2>
+      <p>Upload PDFs from the sidebar, then ask questions.<br>I'll find answers and cite my sources.</p>
+      <div class="suggestion-chips">
+        <button class="chip" data-query="What are the main topics in this document?">📚 Main topics</button>
+        <button class="chip" data-query="Summarise the key points.">✍️ Key points</button>
+        <button class="chip" data-query="What conclusions are drawn?">💡 Conclusions</button>
+      </div>
+    </div>
+
+    <!-- Messages will be injected here -->
+    <div class="messages" id="messages"></div>
+
+  </div>
+
+  <!-- Input bar -->
+  <div class="input-bar">
+    <div class="input-wrapper">
+      <textarea
+        id="queryInput"
+        class="query-input"
+        placeholder="Ask a question about your knowledge base…"
+        rows="1"
+        maxlength="2000"
+      ></textarea>
+      <button class="send-btn" id="sendBtn" aria-label="Send query">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+    <div class="input-meta">
+      <span class="active-filter" id="activeFilter"></span>
+      <span class="char-count" id="charCount">0 / 2000</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══════════════════════════ TOAST ═══════════════════════════════ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
