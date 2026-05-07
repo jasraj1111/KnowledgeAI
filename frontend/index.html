@@ -4,63 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Knowledge Assistant</title>
-  <meta name="description" content="Personal AI Knowledge Assistant – Chat with your PDFs, emails and Notion pages powered by local LLM." />
+  <meta name="description" content="Personal AI Knowledge Assistant - chat with your PDFs, emails and Notion pages using a local LLM." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- ═══════════════════════════ SIDEBAR ═══════════════════════════ -->
 <aside class="sidebar" id="sidebar">
-
   <div class="sidebar-header">
     <div class="logo">
-      <span class="logo-icon">⟁</span>
+      <span class="logo-icon">KA</span>
       <span class="logo-text">KnowledgeAI</span>
     </div>
-    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">Menu</button>
   </div>
 
-  <!-- Knowledge Base Stats -->
   <section class="sidebar-section">
     <h3 class="section-label">Knowledge Base</h3>
     <div class="stats-grid" id="statsGrid">
       <div class="stat-card">
-        <span class="stat-number" id="statTotal">–</span>
+        <span class="stat-number" id="statTotal">-</span>
         <span class="stat-label">Total Chunks</span>
       </div>
       <div class="stat-card">
-        <span class="stat-number" id="statPdf">–</span>
+        <span class="stat-number" id="statPdf">-</span>
         <span class="stat-label">PDF</span>
       </div>
       <div class="stat-card">
-        <span class="stat-number" id="statGmail">–</span>
+        <span class="stat-number" id="statGmail">-</span>
         <span class="stat-label">Gmail</span>
       </div>
       <div class="stat-card">
-        <span class="stat-number" id="statNotion">–</span>
+        <span class="stat-number" id="statNotion">-</span>
         <span class="stat-label">Notion</span>
       </div>
     </div>
   </section>
 
-  <!-- PDF Upload -->
   <section class="sidebar-section">
     <h3 class="section-label">Upload PDF</h3>
     <div class="upload-zone" id="uploadZone">
       <input type="file" id="fileInput" accept=".pdf" hidden />
-      <div class="upload-icon">📄</div>
+      <div class="upload-icon">PDF</div>
       <p class="upload-hint">Drop a PDF here or <span class="upload-link" id="uploadBrowse">browse</span></p>
     </div>
     <div class="upload-progress hidden" id="uploadProgress">
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-      <span class="progress-label" id="progressLabel">Uploading…</span>
+      <span class="progress-label" id="progressLabel">Uploading...</span>
     </div>
     <div class="uploaded-files" id="uploadedFiles"></div>
   </section>
 
-  <!-- Source Filter -->
   <section class="sidebar-section">
     <h3 class="section-label">Filter Sources</h3>
     <div class="filter-pills" id="filterPills">
@@ -71,15 +66,41 @@
     </div>
   </section>
 
+  <!-- Gmail Integration -->
+  <section class="sidebar-section" id="gmailSection">
+    <h3 class="section-label">Gmail</h3>
+
+    <!-- State 1: Not authenticated -->
+    <div id="gmailAuthPanel">
+      <button class="btn gmail-connect-btn" id="gmailAuthBtn">
+        <span class="gmail-btn-icon">📧</span>
+        Connect Gmail
+      </button>
+      <p class="gmail-hint">Sign in to sync your inbox emails</p>
+    </div>
+
+    <!-- State 2: Authenticated (hidden by default) -->
+    <div id="gmailSyncPanel" class="hidden">
+      <div class="gmail-status">
+        <span class="gmail-status-dot"></span>
+        <span id="gmailStatusText">Gmail Connected</span>
+      </div>
+      <button class="btn gmail-sync-btn" id="gmailSyncBtn">
+        <span class="gmail-sync-icon">↻</span>
+        Sync Emails
+      </button>
+      <div class="gmail-sync-progress hidden" id="gmailSyncProgress">
+        <div class="progress-bar"><div class="progress-fill" id="gmailProgressFill"></div></div>
+        <span class="progress-label" id="gmailProgressLabel">Syncing…</span>
+      </div>
+      <div class="gmail-sync-info" id="gmailSyncInfo"></div>
+    </div>
+  </section>
+
   <!-- Coming Soon -->
   <section class="sidebar-section">
     <h3 class="section-label">Coming Soon</h3>
     <div class="coming-soon-list">
-      <div class="coming-soon-item">
-        <span class="cs-icon">📧</span>
-        <span>Gmail Integration</span>
-        <span class="badge">Phase 2</span>
-      </div>
       <div class="coming-soon-item">
         <span class="cs-icon">📝</span>
         <span>Notion Sync</span>
@@ -87,52 +108,45 @@
       </div>
     </div>
   </section>
-
 </aside>
 
-<!-- ═══════════════════════════ MAIN ═══════════════════════════════ -->
 <main class="main" id="main">
-
-  <!-- Top bar -->
   <header class="topbar">
     <div class="topbar-left">
-      <h1 class="page-title">AI Knowledge Assistant</h1>
-      <div class="status-dot" id="statusDot" title="Checking server…"></div>
+      <div>
+        <p class="eyebrow">Workspace assistant</p>
+        <h1 class="page-title">AI Knowledge Assistant</h1>
+      </div>
+      <div class="status-dot" id="statusDot" title="Checking server..."></div>
     </div>
     <div class="topbar-right">
       <button class="btn btn-ghost" id="clearChatBtn">Clear chat</button>
-      <button class="btn btn-ghost" id="refreshStatsBtn">↻ Refresh</button>
+      <button class="btn btn-ghost" id="refreshStatsBtn">Refresh</button>
     </div>
   </header>
 
-  <!-- Chat window -->
   <div class="chat-window" id="chatWindow">
-
-    <!-- Welcome message -->
     <div class="welcome-screen" id="welcomeScreen">
       <div class="welcome-glow"></div>
-      <div class="welcome-icon">⟁</div>
-      <h2>Ask me anything</h2>
-      <p>Upload PDFs from the sidebar, then ask questions.<br>I'll find answers and cite my sources.</p>
+      <div class="welcome-icon">KA</div>
+      <h2>Search your documents with clarity</h2>
+      <p>Upload a PDF, ask a focused question, and get grounded answers with source citations.</p>
       <div class="suggestion-chips">
-        <button class="chip" data-query="What are the main topics in this document?">📚 Main topics</button>
-        <button class="chip" data-query="Summarise the key points.">✍️ Key points</button>
-        <button class="chip" data-query="What conclusions are drawn?">💡 Conclusions</button>
+        <button class="chip" data-query="What are the main topics in this document?">Main topics</button>
+        <button class="chip" data-query="Summarise the key points.">Key points</button>
+        <button class="chip" data-query="What conclusions are drawn?">Conclusions</button>
       </div>
     </div>
 
-    <!-- Messages will be injected here -->
     <div class="messages" id="messages"></div>
-
   </div>
 
-  <!-- Input bar -->
   <div class="input-bar">
     <div class="input-wrapper">
       <textarea
         id="queryInput"
         class="query-input"
-        placeholder="Ask a question about your knowledge base…"
+        placeholder="Ask a question about your knowledge base..."
         rows="1"
         maxlength="2000"
       ></textarea>
@@ -148,10 +162,8 @@
       <span class="char-count" id="charCount">0 / 2000</span>
     </div>
   </div>
-
 </main>
 
-<!-- ═══════════════════════════ TOAST ═══════════════════════════════ -->
 <div class="toast-container" id="toastContainer"></div>
 
 <script src="app.js"></script>

@@ -12,6 +12,9 @@ sentence-transformers==3.0.1
 # LLM via Ollama
 ollama==0.2.1
 
+# LLM via OpenAI-compatible API (OpenRouter, Azure, etc.)
+openai>=1.30.0
+
 # Utilities
 python-dotenv==1.0.1
 numpy==1.26.4
