@@ -484,9 +484,9 @@ function initEventListeners() {
   }
 }
 
-/* ════════════════════════════════════════════
+/* ============================================
    GMAIL
-   ════════════════════════════════════════════ */
+   ============================================ */
 
 async function checkGmailAuth() {
   try {
@@ -507,7 +507,7 @@ async function checkGmailAuth() {
 
 async function startGmailAuth() {
   els.gmailAuthBtn.disabled = true;
-  els.gmailAuthBtn.textContent = "Opening browser…";
+  els.gmailAuthBtn.textContent = "Opening browser...";
 
   try {
     const res = await fetch(`${API}/gmail/auth`, { method: "POST" });
@@ -535,7 +535,7 @@ async function startGmailAuth() {
     toast("Could not start Gmail auth.", "error");
   } finally {
     els.gmailAuthBtn.disabled = false;
-    els.gmailAuthBtn.innerHTML = '<span class="gmail-btn-icon">📧</span> Connect Gmail';
+    els.gmailAuthBtn.innerHTML = '<span class="gmail-btn-icon">G</span> Connect Gmail';
   }
 }
 
@@ -543,11 +543,11 @@ async function syncGmail() {
   els.gmailSyncBtn.disabled = true;
   els.gmailSyncProgress.classList.remove("hidden");
   els.gmailProgressFill.style.width = "30%";
-  els.gmailProgressLabel.textContent = "Fetching emails…";
+  els.gmailProgressLabel.textContent = "Fetching emails...";
 
   try {
     els.gmailProgressFill.style.width = "50%";
-    els.gmailProgressLabel.textContent = "Embedding & storing…";
+    els.gmailProgressLabel.textContent = "Embedding & storing...";
 
     const res = await fetch(`${API}/gmail/sync`, { method: "POST" });
     const data = await res.json();
@@ -557,7 +557,7 @@ async function syncGmail() {
       els.gmailProgressLabel.textContent = "Done!";
 
       if (data.chunks_added > 0) {
-        toast(`✨ Synced ${data.emails_processed} emails (${data.chunks_added} chunks)`, "success");
+        toast(`Synced ${data.emails_processed} emails (${data.chunks_added} chunks)`, "success");
         els.gmailSyncInfo.textContent = `Last sync: ${data.emails_processed} emails, ${data.chunks_added} chunks`;
       } else {
         toast(data.message || "No new emails to sync.", "info");
@@ -584,4 +584,3 @@ checkHealth();
 fetchStats();
 checkGmailAuth();
 setInterval(fetchStats, 30_000);
-
